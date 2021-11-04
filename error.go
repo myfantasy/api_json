@@ -24,6 +24,7 @@ var Errors map[int]string = map[int]string{
 	20400201: "api_json.ApiProvider.DoRequest: fail to compress; compress type `%v`",
 	20400202: "api_json.ApiProvider.DoRequest: fail to restore; compress type `%v`",
 	20400203: "api_json.ApiProvider.DoRequest: unmarshal responce fail",
+	20400204: "api_json.ApiProvider.DoRequest: fail to call CallFunc; object type `%v` action `%v`",
 
 	20400400: "api_json.ServiceApi.DoRequest: Unknown object type `%v` action `%v`",
 }

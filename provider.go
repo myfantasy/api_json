@@ -3,6 +3,7 @@ package api_json
 import (
 	"context"
 	"encoding/json"
+	"time"
 
 	ajt "github.com/myfantasy/api_json_types"
 	"github.com/myfantasy/compress"
@@ -11,7 +12,8 @@ import (
 )
 
 type CallFunction func(ctx context.Context, compType compress.CompressionType, bodyRequest []byte,
-) (outCompType compress.CompressionType, bodyResponce []byte)
+	waitDuration time.Duration,
+) (outCompType compress.CompressionType, bodyResponce []byte, err *mft.Error)
 
 type ApiProvider struct {
 	Compressor *compress.Generator
@@ -94,7 +96,12 @@ func (ap *ApiProvider) DoRequest(ctx context.Context, reqCmd *ajt.CommandRequest
 		}
 	}
 
-	outCompType, bodyResponce := ap.CallFunc(ctx, callCompType, bodyComp)
+	outCompType, bodyResponce, err := ap.CallFunc(ctx, callCompType, bodyComp, 0)
+
+	if err != nil {
+		respCmd.Error = mft.GenerateErrorE(20400204, err, reqCmd.ObjectName, reqCmd.Action)
+		return &respCmd
+	}
 
 	uncBodyResponce := bodyResponce
 	if outCompType != compress.NoCompression {

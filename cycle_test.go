@@ -3,11 +3,13 @@ package api_json
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/myfantasy/authentication"
 	"github.com/myfantasy/authentication/sat"
 	"github.com/myfantasy/authorization/saz"
 	"github.com/myfantasy/compress"
+	"github.com/myfantasy/mft"
 )
 
 func TestCycle(t *testing.T) {
@@ -60,7 +62,12 @@ func TestCycle(t *testing.T) {
 	api.AddApi(&ServiceApi{})
 
 	ap := &ApiProvider{
-		CallFunc:   api.Do,
+		CallFunc: func(ctx context.Context, compType compress.CompressionType,
+			bodyRequest []byte, waitDuration time.Duration,
+		) (outCompType compress.CompressionType, bodyResponce []byte, err *mft.Error) {
+			outCompType, bodyResponce = api.Do(ctx, compType, bodyRequest)
+			return outCompType, bodyResponce, err
+		},
 		Compressor: compress.GeneratorCreate(5),
 
 		GetCompression: gcf,
