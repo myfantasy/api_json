@@ -46,6 +46,17 @@ func (api *Api) AddApi(a ajt.Api) {
 	}
 }
 
+func (api *Api) AddAuthenticationChecker(ac authentication.AuthenticationChecker) {
+	api.mx.Lock()
+	defer api.mx.Unlock()
+
+	if api.AuthenticationChecker == nil {
+		api.AuthenticationChecker = make(map[string]authentication.AuthenticationChecker)
+	}
+
+	api.AuthenticationChecker[ac.Type()] = ac
+}
+
 func (api *Api) RLock(ctx context.Context) bool {
 	return api.mx.RTryLock(ctx)
 }

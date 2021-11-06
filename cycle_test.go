@@ -5,7 +5,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/myfantasy/authentication"
 	"github.com/myfantasy/authentication/sat"
 	"github.com/myfantasy/authorization/saz"
 	"github.com/myfantasy/compress"
@@ -14,41 +13,34 @@ import (
 
 func TestCycle(t *testing.T) {
 	var gcf GetCompressionFunc
-	gcf = func(preferCompress []compress.CompressionType,
-	) (outCompType compress.CompressionType, outPreferCompress []compress.CompressionType) {
-		outCompType = compress.Zip
-		outPreferCompress = append(outPreferCompress, compress.Zip, compress.NoCompression)
-		return outCompType, outPreferCompress
+	gcf = ZipCompressFunc
+	ac := &sat.SimpleAuthenticationChecker{
+		Users: map[string]sat.User{
+			"admin": {
+				Name:       "admin",
+				Pwd:        "123",
+				PwdIsEnc:   false,
+				IsDisabled: false,
+			},
+			"test1": {
+				Name:       "test1",
+				Pwd:        "",
+				PwdIsEnc:   false,
+				IsDisabled: false,
+			},
+			"test2": {
+				Name:       "test2",
+				Pwd:        "",
+				PwdIsEnc:   false,
+				IsDisabled: true,
+			},
+		},
 	}
 	api := &Api{
 		Compressor: compress.GeneratorCreate(7),
 
 		GetCompression: gcf,
 
-		AuthenticationChecker: map[string]authentication.AuthenticationChecker{
-			"simple": &sat.SimpleAuthenticationChecker{
-				Users: map[string]sat.User{
-					"admin": {
-						Name:       "admin",
-						Pwd:        "123",
-						PwdIsEnc:   false,
-						IsDisabled: false,
-					},
-					"test1": {
-						Name:       "test1",
-						Pwd:        "",
-						PwdIsEnc:   false,
-						IsDisabled: false,
-					},
-					"test2": {
-						Name:       "test2",
-						Pwd:        "",
-						PwdIsEnc:   false,
-						IsDisabled: true,
-					},
-				},
-			},
-		},
 		PermissionChecker: &saz.SimplePermissionChecker{
 			Users: map[string]saz.User{
 				"admin": {
@@ -60,6 +52,7 @@ func TestCycle(t *testing.T) {
 	}
 
 	api.AddApi(&ServiceApi{})
+	api.AddAuthenticationChecker(ac)
 
 	ap := &ApiProvider{
 		CallFunc: func(ctx context.Context, compType compress.CompressionType,
