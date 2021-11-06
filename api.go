@@ -87,6 +87,8 @@ func (api *Api) Do(ctx context.Context, compType compress.CompressionType, bodyR
 	if compType != compress.NoCompression {
 		_, bodyIn, resp.CommandResponce.Error = api.Compressor.Restore(ctx, compType, bodyRequest, nil)
 		if resp.CommandResponce.Error != nil {
+			resp.CommandResponce.Error =
+				mft.GenerateErrorE(20400059, resp.CommandResponce.Error, compType)
 			return api.MarshalResponce(ctx, outCompType, &resp)
 		}
 	}
@@ -95,7 +97,7 @@ func (api *Api) Do(ctx context.Context, compType compress.CompressionType, bodyR
 	resp.CommandResponce.Error = req.Unmarchal(bodyIn)
 	if resp.CommandResponce.Error != nil {
 		resp.CommandResponce.Error =
-			mft.GenerateErrorE(20400059, resp.CommandResponce.Error, compType)
+			mft.GenerateErrorE(20400060, resp.CommandResponce.Error, compType)
 		return api.MarshalResponce(ctx, outCompType, &resp)
 	}
 

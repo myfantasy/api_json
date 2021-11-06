@@ -99,7 +99,7 @@ func (ap *ApiProvider) DoRequest(ctx context.Context, reqCmd *ajt.CommandRequest
 	outCompType, bodyResponce, err := ap.CallFunc(ctx, callCompType, bodyComp, 0)
 
 	if err != nil {
-		respCmd.Error = mft.GenerateErrorE(20400204, err, reqCmd.ObjectName, reqCmd.Action)
+		respCmd.Error = mft.GenerateErrorE(20400204, err, reqCmd.ObjectType, reqCmd.Action)
 		return &respCmd
 	}
 

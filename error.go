@@ -19,6 +19,7 @@ var Errors map[int]string = map[int]string{
 	20400057: "api_json.Api.Do: impersonate for user `%v` as `%v` internal error",
 	20400058: "api_json.Api.Do: impersonate for user `%v` as `%v` fail",
 	20400059: "api_json.Api.Do: fail to restore compress type `%v`",
+	20400060: "api_json.Api.Do: fail to unmarshal request (compress type `%v`)",
 
 	20400200: "api_json.ApiProvider.DoRequest: R lock fail",
 	20400201: "api_json.ApiProvider.DoRequest: fail to compress; compress type `%v`",
